@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -12,6 +13,12 @@ from .core import Manifest, load_lock, state_dir
 
 COMMANDS = ("pros-plan", "pros-implement", "pros-review", "pros-audit", "pros-design", "pros-graph",
             "pros-test-web", "pros-test-mobile", "pros-test-components", "pros-tokens")
+
+
+def find(name: str) -> str:
+    """Like shutil.which, but also checks where the toolkit and uv install tools."""
+    path = os.pathsep.join([os.environ.get("PATH", ""), str(Path.home() / ".local" / "bin")])
+    return shutil.which(name, path=path) or ""
 
 
 class Report:
@@ -66,12 +73,11 @@ def check_skills(report: Report) -> None:
 def check_tools(report: Report) -> None:
     print("\nTools")
     lock = load_lock()
-    for name, command, pin in (("graphify", ["graphify", "--version"], lock["pypi"]["graphifyy"]),
-                               ("specify", ["specify", "--version"], lock["pypi"]["specify-cli"])):
-        found = version(command) if shutil.which(name) else ""
+    for name, pin in (("graphify", lock["pypi"]["graphifyy"]), ("specify", lock["pypi"]["specify-cli"])):
+        found = version([find(name), "--version"]) if find(name) else ""
         report("ok" if found else "warn", f"{name}: {found or 'not installed'} (pin {pin})")
-    maestro = shutil.which("maestro") or state_dir() / "bin" / "maestro"
-    found = version([str(maestro), "--version"]) if Path(str(maestro)).exists() else ""
+    maestro = find("maestro")
+    found = version([maestro, "--version"]) if maestro else ""
     report("ok" if found else "info", f"maestro: {found or 'not installed (pros install --with-maestro)'}")
     report("ok" if shutil.which("java") else "info", f"java for maestro: {'found' if shutil.which('java') else 'missing'}")
     run = subprocess.run(["npm", "ls", "-g", "--depth=0", "puppeteer-core"], capture_output=True, text=True) \
@@ -101,7 +107,7 @@ def check_tokens(report: Report) -> None:
 
 def check_mcp(report: Report) -> None:
     print("\nMCP")
-    found = shutil.which("graphify-mcp")
+    found = find("graphify-mcp")
     report("info", f"graphify-mcp: {'available' if found else 'not installed'}. The toolkit configures no MCP servers.")
 
 
@@ -109,8 +115,9 @@ def doctor(_args) -> int:
     report = Report()
     manifest = Manifest()
     print(f"Toolkit: {state_dir()} ({'installed' if manifest.path.exists() else 'not installed'})")
-    report("ok" if shutil.which("pros") else "warn",
-           "pros on PATH" if shutil.which("pros") else f"pros not on PATH, use {state_dir() / 'bin' / 'pros'}")
+    on_path = shutil.which("pros") and shutil.which("graphify")
+    report("ok" if on_path else "warn", "tools on PATH" if on_path else
+           f"add {Path.home() / '.local' / 'bin'} to PATH so agents can find pros, graphify, specify and maestro")
     check_agents(report, manifest)
     check_skills(report)
     check_tools(report)

@@ -20,5 +20,5 @@ Make no code changes.
 
 Use Spec Kit only if the user asks for a spec or spec-driven development. It writes files into the repo.
 
-1. If `.specify/` is missing, show this command and get approval: `specify init --here --integration <agent>`. Keys: `claude`, `codex`, `cursor-agent`, `agy`.
+1. If `.specify/` is missing, show this command and get approval (the binary may be `~/.local/bin/specify`): `specify init --here --integration <agent>`. Keys: `claude`, `codex`, `cursor-agent`, `agy`.
 2. Follow the `speckit-*` commands it installs, one at a time, reviewing each result with the user.

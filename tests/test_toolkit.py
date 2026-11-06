@@ -176,6 +176,23 @@ class Sandbox(unittest.TestCase):
         self.assertIn("Added later.", text)
         self.assertNotIn(core.BLOCK_START, text)
 
+    def test_interrupted_install_can_still_be_uninstalled(self):
+        before = snapshot(self.home)
+        script = (
+            f"import sys; sys.path.insert(0, {str(ROOT)!r})\n"
+            "import pros_toolkit.install as i\n"
+            "def stop(*a, **k): raise KeyboardInterrupt\n"
+            "i.install_pypi = stop\n"
+            "from pros_toolkit.cli import main\n"
+            f"sys.exit(main(['install', '--agents', {ALL!r}, '--yes', '--skip-upstream']))\n"
+        )
+        crashed = subprocess.run([sys.executable, "-c", script], env=self.env, cwd=str(self.home),
+                                 capture_output=True, text=True)
+        self.assertNotEqual(crashed.returncode, 0)
+        self.assertIn(core.BLOCK_START, (self.home / ".claude" / "CLAUDE.md").read_text())
+        self.assertEqual(self.pros("uninstall", "--yes").returncode, 0)
+        self.assertEqual(snapshot(self.home), before)
+
     def test_init_adds_and_removes_cursor_rule(self):
         repo = self.home / "repo"
         repo.mkdir()

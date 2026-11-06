@@ -10,7 +10,7 @@ Request: $ARGUMENTS
 
 Use this when a graph will answer faster than searching. For a small repo or a known file, read the file instead.
 
-1. If `graphify` is missing, say so and use normal search.
+1. If `graphify` isn't on PATH, try `~/.local/bin/graphify`. If that's missing too, say so and use normal search.
 2. If `graphify-out/graph.json` is missing, ask before building it. Build with `graphify update .`. This is local, with no LLM calls.
 3. If the graph is stale, run `graphify update .`. Don't rebuild it when nothing changed.
 4. Answer from the graph, then read only the files it points to:

@@ -4,7 +4,7 @@ Start with `pros doctor`. It doesn't run tests or open a browser.
 
 | Problem | Fix |
 |---|---|
-| `pros: command not found` | Add `~/.local/bin` to `PATH`, or use `~/.pros-toolkit/bin/pros`. |
+| `pros`, `graphify` or `maestro` not found | Add `~/.local/bin` to `PATH`: `echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zshrc`, then restart your agent. Test prompts rely on the plain command name, so this matters for enforcement too. |
 | A command doesn't appear in an agent | Start a new session. In `agy`, run `/skills reload`. Then run `pros doctor`. |
 | `kept your existing ...` | A skill with that name already exists. Rename or remove yours, then run `pros install`. |
 | `Not a terminal, nothing changed` | Review with `--dry-run`, then rerun with `--yes`. |

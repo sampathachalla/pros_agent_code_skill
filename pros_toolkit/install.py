@@ -180,7 +180,11 @@ def install_maestro(pin: dict, manifest: Manifest) -> List[str]:
         return []
     root.mkdir(parents=True, exist_ok=True)
     archive = root / "maestro.zip"
-    urllib.request.urlretrieve(pin["url"], str(archive))
+    try:
+        urllib.request.urlretrieve(pin["url"], str(archive))
+    except OSError as error:
+        archive.unlink(missing_ok=True)
+        return [f"maestro: download failed ({error}). Rerun `pros install --with-maestro`."]
     if sha256(archive.read_bytes()) != pin["sha256"]:
         archive.unlink()
         return ["maestro: checksum mismatch, nothing installed."]
@@ -266,19 +270,25 @@ def install(args) -> int:
         print(f"Stopped before changing agent config: {error}")
         return 1
 
-    messages = [install_app(manifest)]
-    names = build_skills(items)
-    conflicts = link_skills(names, dirs, manifest)
-    for change in changes:
-        if not change.is_noop:
-            apply_change(change, manifest)
-    if not args.skip_tools:
-        messages += install_pypi(lock["pypi"], manifest)
-        if args.with_maestro:
-            messages += install_maestro(lock["maestro"], manifest)
+    # Save after every step: an interrupted install must stay reversible.
     manifest.source_repo = str(REPO) if (REPO / ".git").exists() else manifest.source_repo
     manifest.agents = sorted(set(manifest.agents) | {agent.id for agent in selected})
     manifest.save()
+    messages = [install_app(manifest)]
+    manifest.save()
+    names = build_skills(items)
+    conflicts = link_skills(names, dirs, manifest)
+    manifest.save()
+    for change in changes:
+        if not change.is_noop:
+            apply_change(change, manifest)
+            manifest.save()
+    if not args.skip_tools:
+        messages += install_pypi(lock["pypi"], manifest)
+        manifest.save()
+        if args.with_maestro:
+            messages += install_maestro(lock["maestro"], manifest)
+            manifest.save()
 
     print(f"\nInstalled {len(names)} skills for {len(selected)} agents.")
     for path in conflicts:
