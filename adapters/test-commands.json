@@ -1,0 +1,9 @@
+[
+  "playwright", "npx playwright", "pnpm exec playwright", "pnpm playwright", "yarn playwright", "bunx playwright",
+  "maestro test", "maestro cloud", "maestro studio", "maestro record",
+  "npm test", "npm t", "npm run test*", "pnpm test", "pnpm run test*", "yarn test", "yarn run test*", "bun test", "bun run test*",
+  "jest", "npx jest", "pnpm exec jest", "yarn jest",
+  "vitest", "npx vitest", "pnpm exec vitest", "yarn vitest",
+  "pytest", "python -m pytest", "python3 -m pytest", "uv run pytest",
+  "emulator", "xcrun simctl boot", "open -a Simulator"
+]

@@ -1,0 +1,18 @@
+{
+  "upstream": [
+    {"id": "karpathy-guidelines", "install": "skill", "repo": "https://github.com/multica-ai/andrej-karpathy-skills", "commit": "2c606141936f1eeef17fa3043a72095b4765b9c2", "paths": ["skills/karpathy-guidelines"], "strip": "skills/karpathy-guidelines", "tree_sha256": "65fb6c185e89f32205bedc895698d24c7dad2974f1859360b3736cce6afcee0f"},
+    {"id": "hallmark", "install": "skill", "repo": "https://github.com/Nutlope/hallmark", "commit": "407fa689f4a276f2fd389208d271d0fef08f5058", "paths": ["skills/hallmark"], "strip": "skills/hallmark", "tree_sha256": "ebf8e8afd1541e7ba2c1a9be548a55b2412b9e96236c99eb68d15711db91d9cf"},
+    {"id": "mcp-builder", "install": "skill", "repo": "https://github.com/anthropics/skills", "commit": "2c5958ecac7cee2b583967a2c4981d0f4a75c579", "paths": ["skills/mcp-builder"], "strip": "skills/mcp-builder", "tree_sha256": "f8e859b421059ba94694ae55e7132475f25ddc61bb14150340cad9d67b474c34"},
+    {"id": "skill-creator", "install": "skill", "repo": "https://github.com/anthropics/skills", "commit": "2c5958ecac7cee2b583967a2c4981d0f4a75c579", "paths": ["skills/skill-creator"], "strip": "skills/skill-creator", "tree_sha256": "412558e2d4103a965f8bd319273797a4787f1d4635c2b16f1df0d77d7e0680f4"},
+    {"id": "ponytail-review", "install": "resource", "repo": "https://github.com/DietrichGebert/ponytail", "commit": "7801d061243d7b753bad0e0b3c057cd250b11755", "paths": ["skills/ponytail-review"], "strip": "skills/ponytail-review", "tree_sha256": "a475a06c5427ec1cb40a9dc1e54a894ce15f4238ba48799ae872f3bbd5d91239"},
+    {"id": "ponytail-audit", "install": "resource", "repo": "https://github.com/DietrichGebert/ponytail", "commit": "7801d061243d7b753bad0e0b3c057cd250b11755", "paths": ["skills/ponytail-audit"], "strip": "skills/ponytail-audit", "tree_sha256": "d42624701c82bb128c4718f3117fa07bedad906883eda8a864b1b5d1141aa672"},
+    {"id": "token-usage", "install": "resource", "repo": "https://github.com/Wicked-Sick-Ltd/token-usage", "commit": "fe998547b0dfa9472e2a80cb9beee9bae3018575", "paths": ["scripts/token_usage.py", "data/pricing.json", "LICENSE"], "strip": "", "tree_sha256": "fc4bf24f4daf59df97c0c6c0ad31a65562edf7abf4caf1dc74718d0789ea978a"}
+  ],
+  "pypi": {"graphifyy": "0.9.103", "specify-cli": "1.3.2"},
+  "npm": {"ccusage": "20.0.48"},
+  "maestro": {
+    "version": "2.12.1",
+    "url": "https://github.com/mobile-dev-inc/Maestro/releases/download/cli-2.12.1/maestro.zip",
+    "sha256": "54dbb0716425626604973cbb374c585ca30272375d9ce15177a1152765ddd9d7"
+  }
+}
