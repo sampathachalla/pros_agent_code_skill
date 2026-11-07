@@ -84,7 +84,7 @@ Commit the new files so they go up with your next push, then restart your agent 
 
 ### Spec Kit with several agents
 
-Run `specify init` once per repo, then add each extra agent with `specify integration install`. Running `specify init` again for a second agent fails.
+Run `specify init` once per repo, then add each extra agent with `specify integration install`. Don't run `specify init` again for a second agent: it replaces your first agent instead of adding one.
 
 ```sh
 specify init --here --integration claude     # first agent
