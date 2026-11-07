@@ -65,13 +65,13 @@ Run these once, inside the repo folder. All of them are optional, so use only th
 **Spec Kit:** adds the `/speckit-` commands to this repo.
 
 ```sh
-specify init --here --integration claude     # first agent
-specify integration install codex            # add Codex
-specify integration install cursor-agent     # add Cursor
-specify integration install agy --force      # add Antigravity
+specify init --here --force --non-interactive --integration claude --script sh
+specify integration install codex
+specify integration install cursor-agent
+specify integration install agy --force
 ```
 
-Keep only the agents you use. Don't run `specify init` again for a second agent: it replaces your first agent instead of adding one. If your first agent's CLI isn't on your PATH, add `--ignore-agent-tools` to `specify init`.
+Keep only the agents you use. `--force` and `--non-interactive` skip the confirmation prompts, and `--script sh` uses shell scripts (use `ps` on Windows). Run `specify init` once: running it again with `--force` overwrites any edits to Spec Kit's templates. Don't use it for a second agent either: it replaces your first agent instead of adding one. If your first agent's CLI isn't on your PATH, add `--ignore-agent-tools` to `specify init`.
 
 **Cursor:** adds always-on rules, because Cursor keeps global rules in its settings.
 
