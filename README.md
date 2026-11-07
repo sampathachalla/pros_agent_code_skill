@@ -4,114 +4,148 @@ One global setup for coding agents. Install it once and Claude Code, Codex, Curs
 
 It aims to keep changes small, use fewer tokens, run tests only when you ask, and show where your tokens go.
 
-## Install
+**Jump to:**
 
-You need `git` and Python 3.9 or newer. `uv` installs Graphify and Spec Kit, and Node.js runs `ccusage`.
+1. [Global installation and verification](#1-global-installation-and-verification)
+2. [Commands to run in the terminal](#2-commands-to-run-in-the-terminal)
+3. [Commands to run per repo](#3-commands-to-run-per-repo)
+4. [Commands to run in the agent](#4-commands-to-run-in-the-agent)
+
+## 1. Global installation and verification
+
+Do this once per computer. You need `git` and Python 3.9 or newer. `uv` installs Graphify and Spec Kit, and Node.js runs `ccusage`.
+
+**Install**
 
 ```sh
 git clone https://github.com/sampathachalla/pros_agent_code_skill.git
 cd pros_agent_code_skill
 ./scripts/install.sh --dry-run     # preview every change
 ./scripts/install.sh               # shows the changes and asks first
-pros doctor                        # verify
 ```
 
-Add `--with-maestro` if you build mobile apps. On Windows, run `scripts\install.ps1` (not yet tested on Windows).
+Use `./scripts/install.sh --with-maestro` to include Maestro for mobile testing. On Windows, run `scripts\install.ps1` (not yet tested on Windows).
 
-The installer finds your agents and needs no admin rights. If `pros` isn't found afterwards, add `~/.local/bin` to your `PATH`.
+The installer finds your agents and needs no admin rights.
 
-## Commands
+**Add the tools to your PATH**
 
-Use `/pros-plan` in Claude Code, Cursor and Antigravity, or `$pros-plan` in Codex.
+If `pros` isn't found after installing, run this and open a new terminal:
+
+```sh
+echo 'export PATH="$HOME/.local/bin:$PATH"' >> ~/.zprofile
+```
+
+**Verify**
+
+```sh
+pros doctor
+```
+
+It should end with `All required checks passed.` Then restart your agents so they load the skills.
+
+## 2. Commands to run in the terminal
+
+Run these from any folder. They use no AI tokens.
 
 | Command | What it does |
 |---|---|
-| `pros-plan` | Plan a feature without changing code. Uses Spec Kit if you ask for a spec. |
-| `pros-implement` | Make the smallest change that solves the task. |
-| `pros-review` | Review changed files with Ponytail. Report only. |
-| `pros-audit` | Audit the repository with Ponytail. Report only. |
-| `pros-design` | Apply Hallmark on web, or mobile design guidance on React Native. |
-| `pros-graph` | Inspect code relationships with Graphify. |
-| `pros-test-web` | Run Playwright. |
-| `pros-test-mobile` | Run Maestro. |
-| `pros-test-components` | Run React Native Testing Library tests. |
-| `pros-tokens` | Report token usage. |
+| `pros doctor` | Checks the installation |
+| `pros update` | Pulls the latest toolkit and reinstalls it |
+| `pros tokens` | Shows a Claude Code token report for the last 7 days |
+| `pros tokens --agent codex --since 30d` | Shows a report for another agent or period. Agents: `claude`, `codex`, `cursor`, `antigravity`. |
+| `pros tokens --session` | Shows the latest session only |
+| `pros uninstall --dry-run` | Previews what uninstalling would change |
+| `pros uninstall` | Reverses the install |
 
-The `pros-` prefix keeps your built-in `/plan`, `/review` and `/design` working.
+## 3. Commands to run per repo
 
-These skills can also activate on their own when relevant: `karpathy-guidelines` (coding), `pros-graph` (large repo exploration), `hallmark` (new web pages), `mobile-design` (React Native), `mcp-builder` and `skill-creator`. Only short descriptions load until a skill is used.
+Run these once, inside the repo folder. All of them are optional, so use only the ones you need. The `pros-` commands work in every repo without them.
 
-## Terminal commands
-
-```sh
-pros doctor                  # check the installation
-pros update                  # git pull, then reinstall
-pros tokens                  # token report with no LLM calls
-pros init                    # add always-on Cursor rules to the current repo
-pros uninstall               # reverse the install
-```
-
-## New and existing projects
-
-The `pros-` commands and skills are global, so they work in every repo with no setup.
-
-### Per-repo setup
-
-Run these once in each repo, from the repo folder. All of them are optional, so use only the ones you need.
-
-```sh
-# Spec Kit: adds the /speckit- commands to this repo.
-specify init --here --integration claude
-
-# Cursor only: adds always-on rules, because Cursor keeps global rules in its settings.
-pros init
-
-# Large repos: builds a local map of how the code connects. Uses no AI tokens.
-graphify update .
-
-# Keeps that generated map out of Git.
-echo 'graphify-out/' >> .gitignore
-```
-
-| Command | Use it when | What it does |
-|---|---|---|
-| `specify init --here --integration claude` | You want Spec Kit in this repo | Adds Spec Kit's files and commands for your first agent. |
-| `pros init` | You use Cursor on this repo | Writes `.cursor/rules/pros-toolkit.mdc`. |
-| `graphify update .` | The repo is large or unfamiliar | Builds the map that `/pros-graph` reads. Rerun it after big code changes. |
-| `echo 'graphify-out/' >> .gitignore` | You built a graph | Stops Git committing the generated map. Run it once. |
-
-Commit the new files so they go up with your next push, then restart your agent in that repo.
-
-### Spec Kit with several agents
-
-Run `specify init` once per repo, then add each extra agent with `specify integration install`. Don't run `specify init` again for a second agent: it replaces your first agent instead of adding one.
+**Spec Kit:** adds the `/speckit-` commands to this repo.
 
 ```sh
 specify init --here --integration claude     # first agent
-specify integration install codex            # Codex
-specify integration install cursor-agent     # Cursor
-specify integration install agy --force      # Antigravity
+specify integration install codex            # add Codex
+specify integration install cursor-agent     # add Cursor
+specify integration install agy --force      # add Antigravity
 ```
 
-Keep only the agents you use. If your first agent's CLI isn't on your PATH, add `--ignore-agent-tools` to `specify init`.
+Keep only the agents you use. Don't run `specify init` again for a second agent: it replaces your first agent instead of adding one. If your first agent's CLI isn't on your PATH, add `--ignore-agent-tools` to `specify init`.
 
-Once these files are committed and on `main`, anyone who pulls gets the commands, so nobody needs to run `specify init` again. Run `specify integration install` only to add an agent that isn't set up yet.
+**Cursor:** adds always-on rules, because Cursor keeps global rules in its settings.
+
+```sh
+pros init
+```
+
+**Graphify:** for large repos. Builds a local map of how the code connects and uses no AI tokens.
+
+```sh
+graphify update .
+echo 'graphify-out/' >> .gitignore
+```
+
+Rerun `graphify update .` after big code changes.
+
+**Commit the new files**
+
+```sh
+git add .
+git commit -m "Add agent setup"
+```
+
+Then restart your agent in that repo.
+
+| | Commit it? | After someone pulls `main` |
+|---|---|---|
+| Spec Kit files | Yes | They get the commands. No need to run `specify init` again. |
+| `.cursor/rules/pros-toolkit.mdc` | Yes | They get the rules. |
+| `.gitignore` line | Yes | They get it. |
+| `graphify-out/` | No | Each person runs `graphify update .` once. |
+
+Spec Kit needs no `.gitignore` command. It creates its own `.specify/.gitignore` for machine-only files.
+
+## 4. Commands to run in the agent
+
+Type these in your agent's chat, followed by your request. In Codex, use `$` instead of `/`.
+
+### Pros commands
+
+These work in every repo.
+
+| Command | What it does | Example |
+|---|---|---|
+| `/pros-plan` | Plans a feature without changing code. Uses Spec Kit if you ask for a spec. | `/pros-plan add password reset` |
+| `/pros-implement` | Makes the smallest change that solves the task. | `/pros-implement add the reset endpoint` |
+| `/pros-review` | Reviews changed files with Ponytail. Report only. | `/pros-review` |
+| `/pros-audit` | Audits the repository with Ponytail. Report only. | `/pros-audit` |
+| `/pros-design` | Applies Hallmark on web, or mobile design guidance on React Native. | `/pros-design a settings screen` |
+| `/pros-graph` | Inspects how the code connects with Graphify. | `/pros-graph how does login reach the database?` |
+| `/pros-test-web` | Runs Playwright. | `/pros-test-web` |
+| `/pros-test-mobile` | Runs Maestro. | `/pros-test-mobile` |
+| `/pros-test-components` | Runs React Native Testing Library tests. | `/pros-test-components` |
+| `/pros-tokens` | Reports token usage. | `/pros-tokens` |
+
+The `pros-` prefix keeps your built-in `/plan`, `/review` and `/design` working.
+
+For everyday work, just type your request. The rules always apply, and these skills can activate on their own when relevant: `karpathy-guidelines` (coding), `pros-graph` (large repo exploration), `hallmark` (new web pages), `mobile-design` (React Native), `mcp-builder` and `skill-creator`. Only short descriptions load until a skill is used. Tests and reviews never start by themselves.
 
 ### Spec Kit commands
 
-Spec Kit needs the `specify init` step above. After that, type these directly in your agent, one at a time, and review each result. In Codex, use `$` instead of `/`.
+These need the Spec Kit step from [section 3](#3-commands-to-run-per-repo). Run them one at a time and review each result.
 
-| Command | Use it to | Example |
+| Command | What it does | Example |
 |---|---|---|
-| `/speckit-constitution` | Set project-wide principles. Run once per project. | `/speckit-constitution Focus on fast pages, accessibility and simple code` |
-| `/speckit-specify` | Describe what to build and why. | `/speckit-specify A home page with a hero, features and a sign-up button` |
-| `/speckit-clarify` | Optional. Answer up to 5 questions that fill gaps in the spec. | `/speckit-clarify` |
-| `/speckit-plan` | Choose how to build it. | `/speckit-plan Use Next.js and our existing components` |
-| `/speckit-checklist` | Optional. Create a quality checklist for the requirements. | `/speckit-checklist` |
-| `/speckit-tasks` | Break the plan into ordered tasks. | `/speckit-tasks` |
-| `/speckit-analyze` | Optional. Check that the spec, plan and tasks agree. | `/speckit-analyze` |
-| `/speckit-implement` | Build the code from the tasks. | `/speckit-implement` |
-| `/speckit-converge` | Compare the code with the spec and add tasks for anything unbuilt. | `/speckit-converge` |
+| `/speckit-constitution` | Sets project-wide principles. Run once per project. | `/speckit-constitution Focus on fast pages, accessibility and simple code` |
+| `/speckit-specify` | Describes what to build and why. | `/speckit-specify A home page with a hero, features and a sign-up button` |
+| `/speckit-clarify` | Optional. Asks up to 5 questions that fill gaps in the spec. | `/speckit-clarify` |
+| `/speckit-plan` | Chooses how to build it. | `/speckit-plan Use Next.js and our existing components` |
+| `/speckit-checklist` | Optional. Creates a quality checklist for the requirements. | `/speckit-checklist` |
+| `/speckit-tasks` | Breaks the plan into ordered tasks. | `/speckit-tasks` |
+| `/speckit-analyze` | Optional. Checks that the spec, plan and tasks agree. | `/speckit-analyze` |
+| `/speckit-implement` | Builds the code from the tasks. | `/speckit-implement` |
+| `/speckit-converge` | Compares the code with the spec and adds tasks for anything unbuilt. | `/speckit-converge` |
 
 The shortest path is `specify`, `plan`, `tasks`, `implement`, `converge`. Repeat `implement` and `converge` until converge reports `Converged`. Spec Kit uses more tokens than a normal request, so keep it for bigger features and use `/pros-implement` for small changes.
 
