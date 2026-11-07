@@ -86,7 +86,15 @@ graphify update .
 printf '\ngraphify-out/\n' >> .gitignore
 ```
 
-Rerun `graphify update .` after big code changes. To confirm Git ignores the graph, run `git check-ignore graphify-out`. It should print `graphify-out`.
+**Double-check that Git ignores the graph:**
+
+```sh
+git check-ignore graphify-out
+```
+
+It should print `graphify-out`. If it prints nothing, the graph isn't ignored yet, so check the `.gitignore` line.
+
+Rerun `graphify update .` after big code changes.
 
 **Commit the new files**
 
