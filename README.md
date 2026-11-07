@@ -83,10 +83,10 @@ pros init
 
 ```sh
 graphify update .
-echo 'graphify-out/' >> .gitignore
+printf '\ngraphify-out/\n' >> .gitignore
 ```
 
-Rerun `graphify update .` after big code changes.
+Rerun `graphify update .` after big code changes. To confirm Git ignores the graph, run `git check-ignore graphify-out`. It should print `graphify-out`.
 
 **Commit the new files**
 
