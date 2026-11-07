@@ -53,9 +53,53 @@ pros uninstall               # reverse the install
 
 ## New and existing projects
 
-Nothing is needed per project: skills are global, so they work in every repo.
+The `pros-` commands and skills are global, so they work in every repo with no setup.
 
-The one exception is Cursor, which keeps global rules in its settings UI. Run `pros init` in a repo and commit `.cursor/rules/pros-toolkit.mdc` to give that repo always-on rules.
+### Per-repo setup
+
+Run these once in each repo, from the repo folder. All of them are optional, so use only the ones you need.
+
+```sh
+# Spec Kit: adds the /speckit- commands to this repo.
+# Use codex, cursor-agent or agy instead of claude for other agents.
+specify init --here --integration claude
+
+# Cursor only: adds always-on rules, because Cursor keeps global rules in its settings.
+pros init
+
+# Large repos: builds a local map of how the code connects. Uses no AI tokens.
+graphify update .
+
+# Keeps that generated map out of Git.
+echo 'graphify-out/' >> .gitignore
+```
+
+| Command | Use it when | What it does |
+|---|---|---|
+| `specify init --here --integration claude` | You want Spec Kit in this repo | Adds Spec Kit's files and commands for that agent. Run it again for each extra agent. |
+| `pros init` | You use Cursor on this repo | Writes `.cursor/rules/pros-toolkit.mdc`. |
+| `graphify update .` | The repo is large or unfamiliar | Builds the map that `/pros-graph` reads. Rerun it after big code changes. |
+| `echo 'graphify-out/' >> .gitignore` | You built a graph | Stops Git committing the generated map. Run it once. |
+
+Commit the new files so they go up with your next push, then restart your agent in that repo. Teammates who pull the repo get the Spec Kit commands for that agent without running `specify init`.
+
+### Spec Kit commands
+
+Spec Kit needs the `specify init` step above. After that, type these directly in your agent, one at a time, and review each result. In Codex, use `$` instead of `/`.
+
+| Command | Use it to | Example |
+|---|---|---|
+| `/speckit-constitution` | Set project-wide principles. Run once per project. | `/speckit-constitution Focus on fast pages, accessibility and simple code` |
+| `/speckit-specify` | Describe what to build and why. | `/speckit-specify A home page with a hero, features and a sign-up button` |
+| `/speckit-clarify` | Optional. Answer up to 5 questions that fill gaps in the spec. | `/speckit-clarify` |
+| `/speckit-plan` | Choose how to build it. | `/speckit-plan Use Next.js and our existing components` |
+| `/speckit-checklist` | Optional. Create a quality checklist for the requirements. | `/speckit-checklist` |
+| `/speckit-tasks` | Break the plan into ordered tasks. | `/speckit-tasks` |
+| `/speckit-analyze` | Optional. Check that the spec, plan and tasks agree. | `/speckit-analyze` |
+| `/speckit-implement` | Build the code from the tasks. | `/speckit-implement` |
+| `/speckit-converge` | Compare the code with the spec and add tasks for anything unbuilt. | `/speckit-converge` |
+
+The shortest path is `specify`, `plan`, `tasks`, `implement`, `converge`. Repeat `implement` and `converge` until converge reports `Converged`. Spec Kit uses more tokens than a normal request, so keep it for bigger features and use `/pros-implement` for small changes.
 
 ## What each agent supports
 
