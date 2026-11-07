@@ -61,7 +61,6 @@ Run these once in each repo, from the repo folder. All of them are optional, so 
 
 ```sh
 # Spec Kit: adds the /speckit- commands to this repo.
-# Use codex, cursor-agent or agy instead of claude for other agents.
 specify init --here --integration claude
 
 # Cursor only: adds always-on rules, because Cursor keeps global rules in its settings.
@@ -76,12 +75,27 @@ echo 'graphify-out/' >> .gitignore
 
 | Command | Use it when | What it does |
 |---|---|---|
-| `specify init --here --integration claude` | You want Spec Kit in this repo | Adds Spec Kit's files and commands for that agent. Run it again for each extra agent. |
+| `specify init --here --integration claude` | You want Spec Kit in this repo | Adds Spec Kit's files and commands for your first agent. |
 | `pros init` | You use Cursor on this repo | Writes `.cursor/rules/pros-toolkit.mdc`. |
 | `graphify update .` | The repo is large or unfamiliar | Builds the map that `/pros-graph` reads. Rerun it after big code changes. |
 | `echo 'graphify-out/' >> .gitignore` | You built a graph | Stops Git committing the generated map. Run it once. |
 
-Commit the new files so they go up with your next push, then restart your agent in that repo. Teammates who pull the repo get the Spec Kit commands for that agent without running `specify init`.
+Commit the new files so they go up with your next push, then restart your agent in that repo.
+
+### Spec Kit with several agents
+
+Run `specify init` once per repo, then add each extra agent with `specify integration install`. Running `specify init` again for a second agent fails.
+
+```sh
+specify init --here --integration claude     # first agent
+specify integration install codex            # Codex
+specify integration install cursor-agent     # Cursor
+specify integration install agy --force      # Antigravity
+```
+
+Keep only the agents you use. If your first agent's CLI isn't on your PATH, add `--ignore-agent-tools` to `specify init`.
+
+Once these files are committed and on `main`, anyone who pulls gets the commands, so nobody needs to run `specify init` again. Run `specify integration install` only to add an agent that isn't set up yet.
 
 ### Spec Kit commands
 
